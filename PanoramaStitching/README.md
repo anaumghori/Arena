@@ -81,6 +81,8 @@ How it works:
 2. **Nearest Neighbor Search:** For each feature in image A, find the most similar feature in image B.
 3. **Ratio Test:** Check that the best match is significantly better than the second-best to reduce ambiguity.
 
+<br><br>
+
 | Example 1 | Example 2 |
 |----------|----------|
 | ![Example 1](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/readme_images/feature_matches1.jpg)         | ![Example 2](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/readme_images/feature_matches2.jpg)         |
@@ -116,6 +118,8 @@ Challenges:
 2. **Holes:** Some destination pixels may not map to any source pixel.
 3. **Multiple Sources:** A single destination pixel may get contributions from several source pixels.
 
+<br><br>
+
 | Example 1 | Example 2 |
 |----------|----------|
 | ![Example 1](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/readme_images/warped1.jpg)         | ![Example 2](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/readme_images/warped2.jpg)         |
@@ -126,6 +130,8 @@ Challenges:
 Once images are warped, the algorithm must first determine how large the output canvas needs to be and then seamlessly merge overlapping regions. Warping often pushes image content beyond its original boundaries, so the canvas must be expanded to fit everything. Afterward, blending is applied to smooth seams caused by exposure differences, small misalignments, or parallax effects, ensuring the panorama looks natural.
 
 There are several blending challenges: Differences in exposure may cause variations in brightness or color tones across images, making the seams noticeable. Even when exposures match, overlaps can create visible edges if not blended smoothly. Additionally, parallax effects, caused by objects at different depths, can lead to misalignments that are difficult to correct with a single homography, further complicating the blending process.
+
+<br><br>
 
 | Final Panorama | Final Panorama |
 |----------|----------|
