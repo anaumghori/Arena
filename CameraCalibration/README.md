@@ -397,7 +397,7 @@ This distortion correction capability is what makes Zhang's calibration method s
 
 | Calibration Result 1 | Calibration Result 2 |
 |----------|----------|
-| ![Result 1](CameraCalibration/results/undistorted_3.png) | ![Result 2](CameraCalibration/results/undistorted_20.png) |
+| ![Result 1](https://github.com/anaumghori/3D-geometric-vision/blob/main/CameraCalibration/results/undistorted_3.png) | ![Result 2](https://github.com/anaumghori/3D-geometric-vision/blob/main/CameraCalibration/results/undistorted_20.png) |
 
 <br><br>
 
