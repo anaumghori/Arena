@@ -70,7 +70,9 @@ The journey from a 3D world point to a pixel location involves several coordinat
 
 This pipeline is mathematically expressed as:
 
-$\quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \mathbf{K} \begin{bmatrix} \mathbf{R} & \mathbf{t} \end{bmatrix} \begin{bmatrix} X \\ Y \\ Z \\ 1 \end{bmatrix}$
+$$\begin{bmatrix} u \\\ v \\\ 1 \end{bmatrix} 
+= \mathbf{K} \begin{bmatrix} \mathbf{R} & \mathbf{t} \end{bmatrix} 
+\begin{bmatrix} X \\\ Y \\\ Z \\\ 1 \end{bmatrix}$$
 
 Where:
 - $\mathbf{K}$ is the intrinsic matrix (internal camera parameters)
@@ -106,7 +108,8 @@ For each calibration image, we compute a **homography matrix** that maps 2D ches
 
 The homography relates world plane coordinates $[X, Y]$ to image coordinates $[u, v]$ through:
 
-$\quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \begin{bmatrix} u \\ v \\ 1 \end{bmatrix} = \mathbf{H} \begin{bmatrix} X \\ Y \\ 1 \end{bmatrix}$
+$$\lambda \begin{bmatrix} u \\\ v \\\ 1 \end{bmatrix} 
+= \mathbf{H} \begin{bmatrix} X \\\ Y \\\ 1 \end{bmatrix}$$
 
 **The key insight**: Although we're dealing with 3D-to-2D camera projection, the constraint that all world points lie on a plane reduces the problem to a simpler 2D-to-2D transformation. This homography encodes information about both the camera's intrinsic parameters and its extrinsic pose relative to the chessboard.
 
@@ -114,7 +117,11 @@ $\quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \
 
 Each point correspondence between world coordinates $(X_i, Y_i)$ and image coordinates $(u_i, v_i)$ provides two linear equations. Writing the homography as:
 
-$$\mathbf{H} = \begin{bmatrix} h_{11} & h_{12} & h_{13} \\ h_{21} & h_{22} & h_{23} \\ h_{31} & h_{32} & h_{33} \end{bmatrix}$$
+$$\mathbf{H} = \begin{bmatrix} 
+h_{11} & h_{12} & h_{13} \\\ 
+h_{21} & h_{22} & h_{23} \\\ 
+h_{31} & h_{32} & h_{33} 
+\end{bmatrix}$$
 
 The projection equation becomes:
 
@@ -140,7 +147,10 @@ $$\mathbf{A}\mathbf{h} = \mathbf{0}$$
 
 where $\mathbf{h} = [h_{11}, h_{12}, h_{13}, h_{21}, h_{22}, h_{23}, h_{31}, h_{32}, h_{33}]^T$ and each point correspondence contributes two rows to matrix $\mathbf{A}$:
 
-$$\begin{bmatrix} X_i & Y_i & 1 & 0 & 0 & 0 & -u_iX_i & -u_iY_i & -u_i \\ 0 & 0 & 0 & X_i & Y_i & 1 & -v_iX_i & -v_iY_i & -v_i \end{bmatrix}$$
+$$\begin{bmatrix} 
+X_i & Y_i & 1 & 0 & 0 & 0 & -u_iX_i & -u_iY_i & -u_i \\\ 
+0 & 0 & 0 & X_i & Y_i & 1 & -v_iX_i & -v_iY_i & -v_i 
+\end{bmatrix}$$
 
 Since we need at least 4 point correspondences to solve for the 8 degrees of freedom, and in practice we use many more points (typically 50-100 corners), this becomes an overdetermined system. We solve it using **Singular Value Decomposition (SVD)**, which finds the homography parameters as the right singular vector corresponding to the smallest singular value of matrix **A**.
 
@@ -154,7 +164,11 @@ Zhang's method cleverly extracts intrinsic camera parameters from multiple chess
 
 The intrinsic matrix **K** encodes the camera's internal geometric properties and transforms normalized camera coordinates to pixel coordinates:
 
-$$\mathbf{K} = \begin{bmatrix} f_x & s & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1 \end{bmatrix}$$
+$$\mathbf{K} = \begin{bmatrix} 
+f_x & s & c_x \\\ 
+0 & f_y & c_y \\\ 
+0 & 0 & 1 
+\end{bmatrix}$$
 
 Each parameter has a specific physical meaning:
 
@@ -178,13 +192,13 @@ Where **H** is the observed homography, λ is a scale factor, **K** is the intri
    
    $$\mathbf{r_1}^T \mathbf{r_1} = \mathbf{r_2}^T \mathbf{r_2} = 1 \quad \text{(unit length)}$$
 
-2. **Intrinsic relationship**: These constraints can be expressed in terms of the homography columns **h₁** and **h₂**:
+3. **Intrinsic relationship**: These constraints can be expressed in terms of the homography columns **h₁** and **h₂**:
    
    $$\mathbf{h_1}^T \mathbf{K}^{-T} \mathbf{K}^{-1} \mathbf{h_2} = 0$$
    
    $$\mathbf{h_1}^T \mathbf{K}^{-T} \mathbf{K}^{-1} \mathbf{h_1} = \mathbf{h_2}^T \mathbf{K}^{-T} \mathbf{K}^{-1} \mathbf{h_2}$$
 
-3. **Linear system formulation**: By defining **B** = **K⁻ᵀK⁻¹** and parameterizing it appropriately, these constraints become linear in the unknown intrinsic parameters.
+4. **Linear system formulation**: By defining **B** = **K⁻ᵀK⁻¹** and parameterizing it appropriately, these constraints become linear in the unknown intrinsic parameters.
 
 **The SVD Solution Process**
 
@@ -268,14 +282,19 @@ Zhang's method includes a specific iterative algorithm to handle distortion duri
 
 2. **Distortion computation**: If we project the 3D points into the image using the linear model, deviations will still be present between the projected and extracted points due to radial distortion. From the linear parameters and the 3D points, we compute $(n_x, n_y)$ using:
 
-   $$n_x = \frac{m_{ux}}{m_{ox}}, \quad n_y = \frac{m_{uy}}{m_{oy}}$$
+$$n_x = \frac{m_{ux}}{m_{ox}}, \quad n_y = \frac{m_{uy}}{m_{oy}}$$
 
-   where $(m_{ux}, m_{uy})$ are the ideal undistorted coordinates and $(m_{ox}, m_{oy})$ are the observed coordinates.
+where $(m_{ux}, m_{uy})$ are the ideal undistorted coordinates and $(m_{ox}, m_{oy})$ are the observed coordinates.
 
 3. **Linear constraint setup**: The radial distorted point is:
    
-   $$\begin{bmatrix} x \\ y \\ 1 \end{bmatrix} = \begin{bmatrix} \alpha_x n_x(1 + \kappa_1 r^2 + \kappa_2 r^4) + s n_y(1 + \kappa_1 r^2 + \kappa_2 r^4) + u_x \\ \alpha_y n_y(1 + \kappa_1 r^2 + \kappa_2 r^4) + u_y \\ 1 \end{bmatrix}$$
-
+$$\begin{bmatrix} x \\\ y \\\ 1 \end{bmatrix} 
+= \begin{bmatrix} 
+\alpha_x n_x(1 + \kappa_1 r^2 + \kappa_2 r^4) + s n_y(1 + \kappa_1 r^2 + \kappa_2 r^4) + u_x \\\ 
+\alpha_y n_y(1 + \kappa_1 r^2 + \kappa_2 r^4) + u_y \\\ 
+1 
+\end{bmatrix}$$
+   
 4. **Solve for distortion coefficients**: Stack all these equations into one system and solve for κ₁ and κ₂ parameters
 
 5. **Radial undistortion**: Use κ₁ and κ₂ to radially undistort the 2D points and feed this again to the linear parameter estimation
@@ -321,37 +340,58 @@ This refinement process transforms the good initial estimate from Zhang's linear
 
 Real camera lenses deviate from the ideal pinhole model, introducing various types of distortion. The most significant is **radial distortion**, caused by the spherical shape of lens elements. Light rays passing through different parts of the lens are bent by different amounts, causing straight lines to appear curved, particularly near image edges. **Barrel distortion** makes images appear to bulge outward (positive distortion coefficients), while **pincushion distortion** makes them appear pinched inward (negative distortion coefficients). The effects are most pronounced near image borders.
 
-**Radial Distortion Model**
+**Complete Distortion Model**
 
-The relationship between ideal (undistorted) and observed (distorted) coordinates is:
+The distortion correction process involves several coordinate transformations:
 
-$$x_{\text{distorted}} = x_{\text{ideal}} \cdot (1 + k_1 r^2 + k_2 r^4 + k_3 r^6)$$
+1. **Convert to normalized coordinates**: First, convert pixel coordinates to normalized coordinates relative to the principal point:
 
-$$y_{\text{distorted}} = y_{\text{ideal}} \cdot (1 + k_1 r^2 + k_2 r^4 + k_3 r^6)$$
+$$x_{\text{norm}} = \frac{x_{\text{pixel}} - c_x}{f_x}$$
+
+$$y_{\text{norm}} = \frac{y_{\text{pixel}} - c_y}{f_y}$$
+
+2. **Calculate radial distance**: Compute the squared distance from the optical center in normalized coordinates:
+
+$$r^2 = x_{\text{norm}}^2 + y_{\text{norm}}^2$$
+
+3. **Apply radial distortion**: The radial distortion model modifies the normalized coordinates:
+
+$$x_{\text{radial}} = x_{\text{norm}} \cdot (1 + k_1 r^2 + k_2 r^4 + k_3 r^6)$$
+
+$$y_{\text{radial}} = y_{\text{norm}} \cdot (1 + k_1 r^2 + k_2 r^4 + k_3 r^6)$$
 
 Where:
-- $r^2 = x_{\text{ideal}}^2 + y_{\text{ideal}}^2$ is the squared distance from the image center
 - $k_1, k_2, k_3$ are radial distortion coefficients
-- Positive coefficients cause barrel distortion (outward bulging)
+- Positive coefficients cause barrel distortion (outward bulging)  
 - Negative coefficients cause pincushion distortion (inward pinching)
 
-**Tangential Distortion**
+4. **Apply tangential distortion**: Tangential distortion occurs when the lens system is not perfectly centered or aligned with the image sensor:
 
-**Tangential distortion** occurs when the lens system is not perfectly centered or aligned with the image sensor:
+$$x_{\text{distorted}} = x_{\text{radial}} + [2p_1 x_{\text{norm}} y_{\text{norm}} + p_2(r^2 + 2x_{\text{norm}}^2)]$$
 
-$$x_{\text{distorted}} = x_{\text{ideal}} + [2p_1 x_{\text{ideal}} y_{\text{ideal}} + p_2(r^2 + 2x_{\text{ideal}}^2)]$$
-
-$$y_{\text{distorted}} = y_{\text{ideal}} + [p_1(r^2 + 2y_{\text{ideal}}^2) + 2p_2 x_{\text{ideal}} y_{\text{ideal}}]$$
+$$y_{\text{distorted}} = y_{\text{radial}} + [p_1(r^2 + 2y_{\text{norm}}^2) + 2p_2 x_{\text{norm}} y_{\text{norm}}]$$
 
 Where $p_1, p_2$ are tangential distortion coefficients, typically small for quality lenses.
 
-Once these distortion coefficients are estimated during calibration, they can be used to **undistort** images by applying the inverse transformation. This makes straight lines appear straight and enables accurate geometric measurements.
+5. **Convert back to pixel coordinates**: Finally, convert the distorted normalized coordinates back to pixel coordinates:
 
-**Practical considerations:**
-- Most cameras require only **k₁** and **k₂** for adequate correction
+$$x_{\text{final}} = x_{\text{distorted}} \cdot f_x + c_x$$
+
+$$y_{\text{final}} = y_{\text{distorted}} \cdot f_y + c_y$$
+
+**Undistortion Process**
+
+Once these distortion coefficients are estimated during calibration, they can be used to **undistort** images by applying the inverse transformation. Since the forward distortion equations are nonlinear, the inverse is typically computed iteratively or through lookup tables.
+
+**Practical Considerations:**
+
+- Most cameras require only **k₁** and **k₂** for adequate radial correction
 - **k₃** is used for fisheye lenses or severe wide-angle distortion  
 - Tangential distortion coefficients **p₁, p₂** are typically small for quality lenses
 - Distortion effects are most pronounced near image borders
+- The normalization step ensures distortion coefficients are independent of focal length and principal point values
+
+<br><br>
 
 This distortion correction capability is what makes Zhang's calibration method so valuable for applications requiring precise geometric measurements, such as 3D reconstruction, augmented reality, and robotic vision.
 
