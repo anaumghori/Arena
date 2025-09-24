@@ -38,9 +38,11 @@ In panorama stitching, we use **homogeneous coordinates** to represent 2D points
 
 The underlying mathematics is based on projective geometry, which describes how 3D points are projected onto 2D image planes. A key insight is that when a camera rotates or changes viewpoint, the relationship between corresponding points in different images follows a homography (a projective transformation). The detailed mathematical formulations and equations for these concepts are explained in the [Mathematical Foundations](#mathematical-foundations) section.
 
+<br><br>
+
 | Input 1 | Input 2 | Input 3 | Result |
 |---------|---------|---------|--------|
-| ![Input 1](PanoramaStitching/data/Set4/1.jpg) | ![Input 2](PanoramaStitching/data/Set4/2.jpg) | ![Input 3](PanoramaStitching/data/Set4/3.jpg) | ![Result](PanoramaStitching/data/Set4/Final_Panorama.jpg) |
+| ![Input 1](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/data/Set3/1.jpg) | ![Input 2](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/data/Set3/2.jpg) | ![Input 3](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/data/Set3/3.jpg) | ![Result](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/data/Set3/Final_Panorama.jpg) |
 
 
 <br><br>
@@ -59,6 +61,8 @@ Common Algorithms:
 - **SURF (Speeded-Up Robust Features):** Faster alternative to SIFT with similar properties
 - **ORB (Oriented FAST and Rotated BRIEF):** Efficient algorithm suitable for real-time applications
 
+<br><br>
+
 ### Step 2: Feature Description
 Once feature points are detected, the algorithm creates a unique "fingerprint," called a descriptor, for each one. These descriptors capture the local appearance around a feature in a way that remains reliable even under changes in lighting or slight variations in perspective. They are essential because simply finding points isn't enough, the algorithm also needs a way to describe what those points look like so they can be correctly matched between images. An analogy is describing a person's face: you might note a prominent nose, closely set eyes, or a wide forehead. In the same way, feature descriptors record the distinctive characteristics of image patches, making each feature point recognizable across different views.
 
@@ -66,6 +70,8 @@ How it works:
 1. **Local Gradients:** Measure how pixel brightness changes in direction and strength around each feature point.
 2. **Histogram Creation:** Summarize these gradient directions into histograms, which capture the dominant patterns in the neighborhood.
 3. **Normalization:** Adjust the descriptor values so they are less sensitive to lighting or contrast changes, making matches more reliable.
+
+<br><br>
 
 ### Step 3: Feature Matching
 Feature matching is the process of finding corresponding feature points between overlapping images, which is essential for aligning them accurately. The challenge is that not every detected feature is a true match; similar looking but unrelated points, repetitive patterns like windows or tiles, and lighting differences can all lead to false matches. The goal is to reliably pair features from one image with their counterparts in another so the algorithm knows how the images overlap.
@@ -77,7 +83,9 @@ How it works:
 
 | Example 1 | Example 2 |
 |----------|----------|
-| ![Example 1](PanoramaStitching\readme_images\feature_matches1.jpg)         | ![Example 2](PanoramaStitching\readme_images\feature_matches2.jpg)         |
+| ![Example 1](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/readme_images/feature_matches1.jpg)         | ![Example 2](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/readme_images/feature_matches2.jpg)         |
+
+<br><br>
 
 ### Step 4: Homography Estimation
 Homography estimation calculates the geometric transformation that best aligns the matched feature points between two images. This step is crucial because, once we know which points correspond, we need a mathematical function that maps coordinates from one image to the other. A homography can model several types of transformations: simple shifts (translation), camera rotations, changes in zoom (scale), tilts and viewpoint changes (perspective), and even skewing effects (shear).
@@ -96,6 +104,8 @@ How RANSAC Works:
 4. **Iteration:** Repeat many times, keeping the homography with the most consensus
 5. **Refinement:** Recalculate the final homography using all inlier matches
 
+<br><br>
+
 ### Step 5: Image Warping
 Image warping transforms one image according to the calculated homography so it aligns with another image. This is necessary because, once we know the geometric relationship, we must actually reshape the pixels to match the perspective. 
 
@@ -108,7 +118,9 @@ Challenges:
 
 | Example 1 | Example 2 |
 |----------|----------|
-| ![Example 1](PanoramaStitching\readme_images\warped1.jpg)         | ![Example 2](PanoramaStitching\readme_images\warped2.jpg)         |
+| ![Example 1](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/readme_images/warped1.jpg)         | ![Example 2](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/readme_images/warped2.jpg)         |
+
+<br><br>
 
 ### Step 6: Canvas Size and Blending
 Once images are warped, the algorithm must first determine how large the output canvas needs to be and then seamlessly merge overlapping regions. Warping often pushes image content beyond its original boundaries, so the canvas must be expanded to fit everything. Afterward, blending is applied to smooth seams caused by exposure differences, small misalignments, or parallax effects, ensuring the panorama looks natural.
@@ -117,7 +129,7 @@ There are several blending challenges: Differences in exposure may cause variati
 
 | Final Panorama | Final Panorama |
 |----------|----------|
-| ![Final image](PanoramaStitching\data\Set3\Final_Panorama.jpg)         | ![Final image](PanoramaStitching\data\Set2\Final_Panorama.jpg)         |
+| ![Final image](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/data/Set2/Final_Panorama.jpg)         | ![Final image](https://github.com/anaumghori/3D-geometric-vision/blob/main/PanoramaStitching/data/Set1/Final_Panorama.jpg)         |
 
 
 <br><br>
@@ -149,15 +161,20 @@ $\quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \
 These correspondences represent the same physical points in the scene as observed from two different camera positions.
 
 ### Homography Matrix
+A homography matrix is like a mathematical recipe that transforms coordinates from one image to another. Since we represent points in homogeneous coordinates as [x,y,1], this requires a 3×3 matrix where each element has a specific role in controlling transformation. The relationship between corresponding points in two images is expressed as:
 
-A homography matrix is like a mathematical recipe that transforms coordinates from one image to another. Since we represent points in homogeneous coordinates as $[x, y, 1]$, this requires a 3×3 matrix where each element has a specific role in controlling transformation. The relationship between corresponding points in two images is expressed as:
-
-$\quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \quad \begin{bmatrix} x' \\ y' \\ w' \end{bmatrix} = \begin{bmatrix} h_{11} & h_{12} & h_{13} \\ h_{21} & h_{22} & h_{23} \\ h_{31} & h_{32} & h_{33} \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$
+$$\begin{bmatrix} x' \\\ y' \\\ w' \end{bmatrix} 
+= \begin{bmatrix} 
+h_{11} & h_{12} & h_{13} \\\ 
+h_{21} & h_{22} & h_{23} \\\ 
+h_{31} & h_{32} & h_{33} 
+\end{bmatrix} 
+\begin{bmatrix} x \\\ y \\\ 1 \end{bmatrix}$$
 
 **Understanding each part of the homography matrix:**
-- **Top-left 2×2 block** $\begin{bmatrix} h_{11} & h_{12} \\ h_{21} & h_{22} \end{bmatrix}$: Controls rotation, scaling, and shearing
-- **Top-right column** $\begin{bmatrix} h_{13} \\ h_{23} \end{bmatrix}$: Controls translation (shifting left/right and up/down)
-- **Bottom row** $[h_{31}, h_{32}, h_{33}]$: Controls perspective effects (making things look closer or farther)
+- **Top-left 2×2 block** $(h_{11}, h_{12}; h_{21}, h_{22})$: Controls rotation, scaling, and shearing
+- **Top-right column** $(h_{13}; h_{23})$: Controls translation (shifting left/right and up/down)
+- **Bottom row** $$([h_{31}, h_{32}, h_{33}])$$: Controls perspective effects (making things look closer or farther)
 
 **What happens in this multiplication?**
 When we multiply the matrix with our point $[x, y, 1]$, we get:
