@@ -40,6 +40,12 @@ Without calibration, measurements from images would be inaccurate, 3D reconstruc
 
 <br><br>
 
+| Calibration Result 1 | Calibration Result 2 |
+|----------|----------|
+| ![Result 1](https://github.com/anaumghori/3D-geometric-vision/blob/main/CameraCalibration/results/undistorted_3.png) | ![Result 2](https://github.com/anaumghori/3D-geometric-vision/blob/main/CameraCalibration/results/undistorted_20.png) |
+
+<br><br>
+
 # The Pinhole Camera Model
 
 The pinhole camera model is the fundamental mathematical framework for understanding how 3D points project onto 2D images. Imagine a box with a tiny hole in one side, light rays from the outside world pass through this hole and create an inverted image on the opposite wall. This simple concept forms the basis for all camera calibration mathematics. 
@@ -394,10 +400,6 @@ Once these distortion coefficients are estimated during calibration, they can be
 <br><br>
 
 This distortion correction capability is what makes Zhang's calibration method so valuable for applications requiring precise geometric measurements, such as 3D reconstruction, augmented reality, and robotic vision.
-
-| Calibration Result 1 | Calibration Result 2 |
-|----------|----------|
-| ![Result 1](https://github.com/anaumghori/3D-geometric-vision/blob/main/CameraCalibration/results/undistorted_3.png) | ![Result 2](https://github.com/anaumghori/3D-geometric-vision/blob/main/CameraCalibration/results/undistorted_20.png) |
 
 <br><br>
 
